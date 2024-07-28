@@ -1,11 +1,31 @@
 {
-  "name": "backend",
+  "name": "backend-drive.io",
   "version": "1.0.0",
-  "description": "",
+  "description": "backend of drive.io",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dotenv": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+    "start": "nodemon -r dotenv/config src/index.js"
   },
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "javascript",
+    "backend",
+    "node",
+    "express"
+  ],
+  "author": "Subham Kumar",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.1",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
 }
