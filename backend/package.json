@@ -17,6 +17,7 @@
   "author": "Subham Kumar",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1665.0",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
