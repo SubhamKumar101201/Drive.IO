@@ -1,38 +1,33 @@
-import { s3 } from '../config/awsConfig.js'
-import fs from "fs"
-
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { s3Client } from '../config/s3Client.js';
+import fs from 'fs'
 
 
 const uploadFileToS3 = async (localFilePath) => {
     try {
 
-        // Read the file from the local filesystem
-        fs.readFile(localFilePath, (error, fileContent) => {
-            if (error) {
-                fs.unlinkSync(localFilePath)
-                return new Error(`Error reading file: ${error.message}`)
-            }
+        console.log(`localfilepath inside util ${localFilePath}`);
 
-            // Set up S3 upload parameters
-            const params = {
-                Bucket: process.env.AWS_BUCKET_NAME,
-                Key: localFilePath,
-                Body: fileContent,
-            }
+        const fileStream = fs.createReadStream(localFilePath);
 
-            s3.upload(params, (error, data) => {
-                if (error) {
-                    fs.unlinkSync(localFilePath)
-                    return new Error(`Error uploading file to S3: ${error.message}`)
-                }
+        console.log(`fileStream inside util ${JSON.stringify(fileStream,null, "\t")}`);
 
-                if (data) {
-                    console.log("file  is uploaded on s3 ", data.Location);
-                    fs.unlinkSync(localFilePath)
-                    return data.Location
-                }
-            })
-        })
+
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME,
+            Key: localFilePath,
+            Body: localFilePath,
+        }
+
+        const data = await s3Client.send(new PutObjectCommand(params))
+
+        if(!data) {
+            fs.unlinkSync(localFilePath)
+            console.log('Error uploading file to S3')
+        }
+
+        console.log(`upload util ${data}`);
+        return data
 
     } catch (error) {
 
