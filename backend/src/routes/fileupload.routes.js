@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { healthCheck } from '../controllers/fileUpload.controller'
-import { upload } from '../middlewares/multer.middleware'
+import { healthCheck, uploadFile } from '../controllers/fileUpload.controller.js'
+import { upload } from '../middlewares/multer.middleware.js'
 
 const router = Router()
 

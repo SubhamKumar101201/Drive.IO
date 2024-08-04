@@ -11,11 +11,7 @@ const uploadFile = async (req, res) => {
 
         const fileLocalPath = req.file
 
-        console.log(`localfilepath : ${JSON.stringify(fileLocalPath,null,'\t')}`);
-
-        return
-
-        if(!fileLocalPath) {
+        if(!fileLocalPath?.path) {
             return res.status(400).json({ message: 'No file uploaded' })
         }
 
@@ -24,8 +20,6 @@ const uploadFile = async (req, res) => {
         if(!s3FilePath) {
             return res.status(500).json({ message: 'Failed to upload file to S3'})
         }
-
-        console.log(s3FilePath);
 
         return res.status(200).json({ message: 'File upload to s3 successfully' , s3Path: s3FilePath })
         
