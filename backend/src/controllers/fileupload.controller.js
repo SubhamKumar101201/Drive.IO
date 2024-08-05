@@ -1,4 +1,4 @@
-import { uploadFileToS3 }  from '../utils/s3Uploads.js'
+import { uploadFileToS3 }  from '../utils/s3uploads.js'
 
 
 

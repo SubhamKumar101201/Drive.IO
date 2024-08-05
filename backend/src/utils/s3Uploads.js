@@ -1,7 +1,8 @@
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { s3Client } from '../config/s3Client.js';
+import { s3Client } from '../config/s3client.js';
 import fs from 'fs'
 import path from 'path'
+import { s3url } from './s3url.js';
 
 
 const uploadFileToS3 = async (localFilePath) => {
@@ -27,7 +28,7 @@ const uploadFileToS3 = async (localFilePath) => {
 
         fs.unlinkSync(localFilePath.path)
 
-        return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`
+        return s3url(fileName)
 
     } catch (error) {
 
