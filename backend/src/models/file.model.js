@@ -20,7 +20,7 @@ const fileSchema = new Schema({
             url: String,
             fileName: String,
             fileSize: String,
-            fileExtension: String
+            fileType: String
         },
         required: true
     },
