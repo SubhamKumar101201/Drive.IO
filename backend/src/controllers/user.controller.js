@@ -3,7 +3,7 @@ import { User } from "../models/user.model.js"
 import { ApiError } from "../utils/ApiError.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
-import { uploadOnCloudinary } from "../utils/cloudinary.js"
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js"
 import fs from "fs"
 
 
@@ -156,6 +156,87 @@ export const logoutUser = asyncHandler(async (req, res) => {
             .clearCookie("refreshToken", options)
             .json(new ApiResponse(200, {}, "User logged out successfully"))
 
+})
+
+export const updateProfileImage = asyncHandler(async (req,res) => {
+        
+        const profileImageLocalPath = req.file?.path
+
+        if(!profileImageLocalPath) {
+            throw new ApiError(400, "Profile image is missing")
+        }
+
+        const user = await User.findById(req.user?._id)
+
+        if(!user) {
+            throw new ApiError(400, "User not found to update")
+        }
+
+        const profileImage = await uploadOnCloudinary(profileImageLocalPath) 
+
+        if(!profileImage?.secure_url) {
+            throw new ApiError(500, "Failed to upload profile image")
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(user._id,
+            {
+                $set: {
+                    profileImage: {
+                        publicId: profileImage?.public_id,
+                        url: profileImage?.secure_url
+                    }
+                }
+            },
+            { new: true }
+        ).select("-password - refreshToken")
+
+        if(!updatedUser) {
+            throw new ApiError(500, "Failed to update profile image")
+        }
+
+        if( user?.profileImage?.publicId ) {
+            await deleteFromCloudinary(user?.profileImage?.publicId)
+        }
+
+        return res.status(200)
+                .json(
+                    new ApiResponse(200, updatedUser, "Profile image updated successfully")
+                )
+
+})
+
+export const updateUserDetails = asyncHandler(async (req,res) => {
+
+    const { firstName, lastName } = req.body
+
+    if (!firstName?.trim() || !lastName?.trim()) {
+        throw new ApiError(400, "Please provide all fields")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                firstName: firstName.trim(),
+                lastName: lastName.trim()
+            }
+        },
+        { new: true }
+    ).select("-password -refreshtoken")
+
+    if(!user) {
+        throw new ApiError(500, "Failed to update user details")
+    }
+
+    return res.status(200)
+            .json(
+                new ApiResponse(200, user, "User details updated successfully")
+            )
+
+})
+
+export const forgetPassword = asyncHandler(async (req,res) => {
+    const { email, oldPassword, newPassword } = req.body
 })
 
 /*
