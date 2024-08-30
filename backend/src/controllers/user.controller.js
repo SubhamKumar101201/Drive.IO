@@ -53,7 +53,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     const existingUser = await User.findOne({ email })
 
-    if (!existingUser) {
+    if (existingUser) {
         fs.unlinkSync(profileImageLocalPath)
         throw new ApiError(409, "User with email already exists")
     }
